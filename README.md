@@ -1,51 +1,146 @@
-<p align="center">
-   <img alt="is-a-dev Banner" src="https://raw.githubusercontent.com/is-a-dev/register/main/media/banner.png">
-</p>
+# Media Scanner
 
-<p align="center">
-   <img alt="Domains" src="https://img.shields.io/github/directory-file-count/is-a-dev/register/domains?color=5c46eb&label=domains&style=for-the-badge">
-   <img alt="Open Pull Requests" src="https://img.shields.io/github/issues-raw/is-a-dev/register?color=5c46eb&label=issues&style=for-the-badge">
-   <img alt="Open Issues" src="https://img.shields.io/github/issues-pr-raw/is-a-dev/register?color=5c46eb&label=pull%20requests&style=for-the-badge">
-</p>
+A Windows WPF application that scans network drives (like D-Link ShareCenter) and external drives for media files, automatically fetching metadata from online sources like IMDB to create a comprehensive media library.
 
-<h1 align="center">is-a.dev</h1>
+## Features
 
-<p align="center"><strong>is-a-dev</strong> is a service that allows developers to get a sweet-looking ".is-a.dev" domain for their personal websites.</p>
+- **Network Drive Discovery**: Automatically discovers and connects to network shares and USB drives
+- **Media File Detection**: Supports movies, TV shows, music, and other media formats
+- **Metadata Fetching**: Retrieves information from OMDB API (movies/TV) and MusicBrainz (music)
+- **Modern UI**: Clean, Material Design-inspired interface
+- **Search & Filtering**: Advanced search and filtering capabilities
+- **Local Database**: SQLite database for caching metadata and fast access
+- **Background Processing**: Non-blocking scanning and metadata fetching
 
-<p align="center">
-   <a href="https://discord.gg/is-a-dev-830872854677422150"><img alt="Discord Server" src="https://invidget.switchblade.xyz/is-a-dev-830872854677422150"></a>
-</p>
+## Supported File Formats
 
-## Issues
-If you have any problems, feel free to [open a issue](https://github.com/is-a-dev/register/issues/new/choose).
+### Video Files
+- MP4, AVI, MKV, MOV, WMV, FLV, WebM, M4V, MPG, MPEG, 3GP
 
-If you have an issue that contains confidental infomation, send an email to security@maintainers.is-a.dev.
+### Audio Files
+- MP3, FLAC, WAV, AAC, OGG, WMA, M4A, Opus, AIFF
 
-## Register
+### Image Files
+- JPG, JPEG, PNG, GIF, BMP, TIFF, WebP
 
-### Manual Registration
-- [Fork](https://github.com/is-a-dev/register/fork) this repository.
-- Add a new file called `your-domain-name.json` in the `domains` folder to register `your-domain-name.is-a.dev`.
-- [Read the documentation](https://www.is-a.dev/docs).
-- Your pull request will be reviewed and merged. *Make sure to keep an eye on it incase we need you to make any changes!*
-- After the pull request is merged, please allow up to 24 hours for the changes to propagate.
-- Enjoy your new `.is-a.dev` domain!
+## Setup Instructions
 
-### Automated Registration
-#### *When using the manage site, please ensure your records are valid. Please do NOT "test" out the manage site and create invalid PRs, it wastes maintainers' time.*
+### Prerequisites
+- Windows 10/11
+- .NET 8.0 Runtime
+- Internet connection for metadata fetching
 
-Easiest method: Use the [manage website](https://manage.is-a.dev), sign in with your GitHub account and click the register page in the navbar. Fill out some questions and it will all happen automatically!
+### Installation
 
-Another method is to join our [Discord server](https://discord.gg/PZCGHz4RhQ), head to the commands channel and run `/register`. The bot will ask you a few questions then will generate your PR and domain automatically. The bot also allows for domain deletion and editing.
+1. **Clone or download the project**
+2. **Get API Keys**:
+   - Visit [OMDB API](http://www.omdbapi.com/) and get a free API key
+   - Open `Services/MetadataService.cs` and replace `YOUR_OMDB_API_KEY_HERE` with your actual API key
 
-## Status
-You can check the uptime of our services on our [status dashboard](https://is-a-dev.wdh.gg).
+3. **Build and run**:
+   ```bash
+   dotnet restore
+   dotnet build
+   dotnet run
+   ```
 
-### Donate
-If you like this project, please consider donating so we can keep this project running forever!
+### First Run
 
-<a href="https://www.buymeacoffee.com/phenax" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me a Coffee" height="28" width="119"></a>
-<a href="https://liberapay.com/phenax" target="_blank"><img src="https://img.shields.io/badge/liberapay-donate-yellow.svg?style=for-the-badge" alt="Liberapay"></a>
+1. **Scan for Drives**: Click the refresh button to discover available network drives and USB drives
+2. **Connect to Network Shares**: The app will automatically try to discover common NAS devices like:
+   - D-Link ShareCenter
+   - Synology NAS
+   - QNAP NAS
+   - Buffalo NAS
+   - Netgear NAS
+   - WD MyCloud
 
-### Similar Services
-If you want to find services similar to is-a.dev, take a look on [Free For Life](https://github.com/wdhdev/free-for-life#domains).
+3. **Scan Media**: Click the scan button next to any discovered drive to start scanning for media files
+4. **View Results**: Media items will appear in the main library view with fetched metadata
+
+## Configuration
+
+### Network Discovery
+The app automatically scans for:
+- Mapped network drives
+- USB/removable drives  
+- Common NAS device hostnames on the local network
+
+### Metadata Sources
+- **Movies & TV Shows**: OMDB API (requires free API key)
+- **Music**: MusicBrainz API (no key required)
+
+### Database Location
+The SQLite database is stored at:
+`%APPDATA%\MediaScanner\media.db`
+
+## Usage
+
+### Scanning Drives
+1. Use the "Scan for Network Drives" button to discover available drives
+2. Select a drive from the left panel
+3. Click the scan button to start scanning for media files
+4. The app will automatically detect file types and fetch metadata
+
+### Searching and Filtering
+- Use the search box to find specific titles, artists, or series
+- Toggle media type filters (Movies, TV Shows, Music, Other)
+- Results update in real-time as you type
+
+### Media Types
+The app automatically categorizes files as:
+- **Movies**: Video files in movie directories or with movie-like names
+- **TV Shows**: Files matching TV episode patterns (S01E01) or in season folders
+- **Music**: Audio files, preferably organized in Artist/Album folder structure
+- **Other**: Any other supported media files
+
+## Architecture
+
+### Services
+- **DriveScanner**: Discovers network drives and scans for media files
+- **MetadataService**: Fetches metadata from external APIs
+- **DatabaseService**: Manages SQLite database operations
+- **MediaLibraryService**: Orchestrates scanning and library management
+
+### UI Framework
+- **WPF** with **Material Design** themes
+- **MVVM** pattern using CommunityToolkit.Mvvm
+- **Dependency Injection** with Microsoft.Extensions.DependencyInjection
+
+## Troubleshooting
+
+### Network Drive Access Issues
+- Ensure the network drive is accessible from your computer
+- Check Windows network credentials
+- Try mapping the drive manually first
+
+### API Key Issues
+- Verify your OMDB API key is correct
+- Check your internet connection
+- API has rate limits - scanning large libraries may take time
+
+### Performance
+- Large libraries (1000+ files) may take time to scan initially
+- Metadata fetching happens in background and may continue after scan completes
+- Database caches all metadata for fast subsequent access
+
+## Development
+
+### Adding New Metadata Sources
+1. Implement new response models in `Models/MetadataResponse.cs`
+2. Add new methods to `IMetadataService` and `MetadataService`
+3. Update `MediaLibraryService` to use new metadata sources
+
+### Adding New File Types
+1. Update file extension lists in `DriveScanner.cs`
+2. Add new `MediaType` enum values if needed
+3. Update UI to handle new media types
+
+## License
+
+This project is provided as-is for educational and personal use.
+
+## API Credits
+
+- Movie/TV metadata provided by [OMDB API](http://www.omdbapi.com/)
+- Music metadata provided by [MusicBrainz](https://musicbrainz.org/)
